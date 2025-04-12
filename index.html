@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>JOBSY - Login</title>
+    <title>Get Started - Jobsy</title>
     <link
       href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
       rel="stylesheet"
@@ -15,11 +15,15 @@
         .form-box {
           max-width: 28rem;
         }
+        .text-sm {
+          margin-top: 20px;
+        }
+
       </style>
   </head>
   <body class="bg-black text-white-900"> <div class="min-h-screen flex flex-col justify-center items-center px-4">
       <div class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-white">JOBSY</h1>
+        <h1 class="text-4xl font-bold text-white">Jobsy</h1>
         <p class="text-xl text-green-500 font-semibold">
           Empowering your career journey
         </p>
@@ -264,7 +268,7 @@
             console.error("Signup API call error:", error);
             let errorMessage = "An unexpected error occurred during signup.";
             if (error instanceof Error && error.message.includes('Signup failed. Status: 422:')) {
-              // Try to extract more specific message if it exists in the error.message
+              
               const parts = error.message.split(': ');
               if (parts.length > 2) {
                 errorMessage = parts.slice(2).join(': ');
