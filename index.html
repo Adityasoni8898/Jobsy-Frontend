@@ -261,14 +261,14 @@
               localStorage.setItem('jobsy_token_type', data.token_type);
 
               console.log(data.access_token);
-              console.log("Redirecting to dashboard ");
-              window.location.href = 'src/Student.html';
+              console.log("Redirecting to student form ");
+              window.location.href = 'src/StudentForm.html';
 
             } catch (error) {
             console.error("Signup API call error:", error);
             let errorMessage = "An unexpected error occurred during signup.";
             if (error instanceof Error && error.message.includes('Signup failed. Status: 422:')) {
-              
+
               const parts = error.message.split(': ');
               if (parts.length > 2) {
                 errorMessage = parts.slice(2).join(': ');
