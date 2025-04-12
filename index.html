@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JOBSY - Login</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <style>
+        body {
+          font-family: "Inter", sans-serif;
+        }
+        .form-box {
+          max-width: 28rem;
+        }
+      </style>
+  </head>
+  <body class="bg-black text-white-900"> <div class="min-h-screen flex flex-col justify-center items-center px-4">
+      <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-white">JOBSY</h1>
+        <p class="text-xl text-green-500 font-semibold">
+          Empowering your career journey
+        </p>
+      </div>
+
+      <div
+        class="form-box w-full p-6 bg-white border border-gray-200 rounded-lg shadow-md"
+      >
+        <h2 class="text-2xl font-bold mb-4 text-center" id="formTitle">
+          Login
+        </h2>
+        <form id="authForm" class="space-y-4">
+          <div>
+            <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              required
+              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:ring-black focus:border-black"
+            />
+          </div>
+          <div id="emailContainer" style="display: none;">
+            <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:ring-black focus:border-black"
+            />
+          </div>
+          <div id="userTypeContainer" style="display: none;">
+             <label for="userType" class="block text-sm font-medium text-gray-700">
+               I am a...
+             </label>
+            <select
+              id="userType"
+              name="userType"
+              required
+              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:ring-black focus:border-black"
+            >
+              <option value="Candidate">Candidate</option>
+              <option value="Recruiter">Recruiter</option>
+            </select>
+          </div>
+          <div>
+            <label
+              for="password"
+              class="block text-sm font-medium text-gray-700"
+              >Password</label
+            >
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:ring-black focus:border-black"
+            />
+          </div>
+           <div id="errorMessage"></div>
+          <button
+            type="submit"
+            class="w-full py-2 px-4 bg-black text-white rounded font-semibold submit-button"
+          >
+            Login
+          </button>
+          <p class="text-sm text-center text-gray-600">
+            Don't have an account?
+            <a
+              href="#"
+              id="toggleMode"
+              class="text-green-600 font-medium hover:underline"
+              >Sign up</a
+            >
+          </p>
+        </form>
+      </div>
+      <p class="text-sm text-white font-semibold text-center padding-top"> Jobsy© 2025
+      </p>
+    </div>
+
+    <script>
+      const formTitle = document.getElementById("formTitle");
+      const authForm = document.getElementById("authForm");
+      const toggleLink = document.getElementById("toggleMode");
+      const submitBtn = authForm.querySelector("button");
+      const userTypeSelect = document.getElementById("userType");
+      const userTypeContainer = document.getElementById("userTypeContainer");
+      const errorMessageDiv = document.getElementById("errorMessage");
+      const emailContainer = document.getElementById("emailContainer");
+      const emailInput = document.getElementById("email");
+
+      let isSignup = false;
+
+      function toggleFormMode() {
+          isSignup = !isSignup;
+          errorMessageDiv.textContent = ''; // Clear errors on mode toggle
+          formTitle.textContent = isSignup ? "Sign Up" : "Login";
+          submitBtn.textContent = isSignup ? "Sign Up" : "Login";
+          toggleLink.textContent = isSignup ? "Log in" : "Sign up";
+          toggleLink.previousSibling.textContent = isSignup
+            ? "Already have an account? "
+            : "Don't have an account? ";
+
+           userTypeContainer.style.display = isSignup ? "block" : "none";
+           emailContainer.style.display = isSignup ? "block" : "none";
+
+           if (!isSignup) {
+               userTypeSelect.removeAttribute('required');
+               emailInput.removeAttribute('required');
+           } else {
+                userTypeSelect.setAttribute('required', 'required');
+                emailInput.setAttribute('required', 'required');
+           }
+      }
+
+      toggleLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        toggleFormMode();
+      });
+
+      authForm.addEventListener("submit", async (e) => { // Added async here
+        e.preventDefault();
+        errorMessageDiv.textContent = ''; // Clear previous errors
+        submitBtn.disabled = true; // Disable button during request
+        submitBtn.textContent = 'Processing...'; // Provide feedback
+
+        const formData = new FormData(authForm);
+        const username = formData.get('username');
+        const password = formData.get('password');
+
+        if (isSignup) {
+          const email = formData.get('email');
+
+          const signupApiUrl = 'https://jobsy.ignorelist.com/signup';
+          const signupParams = new URLSearchParams({
+            username: username,
+            email: email,
+            password: password
+          }).toString();
+
+          const fullSignupUrl = `${signupApiUrl}?${signupParams}`;
+          console.log("Signup Request URL:", fullSignupUrl);
+
+          try {
+            const response = await fetch(fullSignupUrl, {
+              method: 'POST',
+              headers: {
+                'accept': 'application/json'
+                // Content-Type is not strictly needed as parameters are in the URL
+                // You can try removing it if it causes issues, but it's often safe to include
+                // 'Content-Type': 'application/x-www-form-urlencoded'
+              }
+              // No need for a body as the parameters are in the URL
+            });
+
+            if (!response.ok) {
+              let errorMsg = `Signup failed. Status: ${response.status}`;
+              try {
+                const errorData = await response.json();
+                errorMsg += `: ${errorData.message || JSON.stringify(errorData) || 'Unknown error'}`;
+              } catch (jsonError) {
+                errorMsg += `. Could not parse error response.`;
+              }
+              throw new Error(errorMsg);
+            }
+
+            const data = await response.json();
+            console.log("Signup successful:", data);
+            errorMessageDiv.textContent = data.message || "Signup successful!";
+            errorMessageDiv.className = 'text-green-500 font-semibold';
+            // Optionally redirect to login page after successful signup
+            setTimeout(() => {
+              toggleFormMode(); // Switch back to login form
+              errorMessageDiv.textContent = '';
+              errorMessageDiv.className = '';
+            }, 2000);
+
+          } catch (error) {
+            console.error("Signup API call error:", error);
+            errorMessageDiv.textContent = error.message || "An unexpected error occurred during signup.";
+            errorMessageDiv.className = 'text-red-500 font-semibold';
+          } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Sign Up';
+          }
+
+        } else {
+          // --- LOGIN Logic ---
+          console.log("Attempting login for:", username);
+
+          const details = {
+              'grant_type': 'password',
+              'username': username,
+              'password': password,
+              'scope': '',
+              'client_id': 'string',
+              'client_secret': 'string'
+          };
+
+          // Format as application/x-www-form-urlencoded
+          const formBody = Object.keys(details)
+              .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(details[key]))
+              .join('&');
+
+          const apiUrl = 'https://jobsy.ignorelist.com/login'; // API endpoint
+
+          try {
+              const response = await fetch(apiUrl, {
+                  method: 'POST',
+                  headers: {
+                      'accept': 'application/json',
+                      'Content-Type': 'application/x-www-form-urlencoded'
+                  },
+                  body: formBody
+              });
+
+              if (!response.ok) {
+                  // Handle HTTP errors (e.g., 401 Unauthorized, 400 Bad Request)
+                  let errorMsg = `Login failed. Status: ${response.status}`;
+                      try {
+                          const errorData = await response.json(); // Try to parse error details from API
+                          errorMsg += `: ${errorData.detail || 'Unknown error'}`;
+                      } catch (jsonError) {
+                          // Could not parse JSON error response
+                          errorMsg += `. Could not parse error response.`;
+                      }
+                      throw new Error(errorMsg); // Throw an error to be caught below
+              }
+
+              const data = await response.json(); // Parse the JSON response body
+
+              console.log("Login successful:", data);
+
+              localStorage.setItem('jobsy_access_token', data.access_token);
+              localStorage.setItem('jobsy_token_type', data.token_type);
+
+              console.log(data.access_token);
+              console.log("Redirecting to dashboard ");
+              window.location.href = '/Student.html';
+
+            } catch (error) {
+            console.error("Signup API call error:", error);
+            let errorMessage = "An unexpected error occurred during signup.";
+            if (error instanceof Error && error.message.includes('Signup failed. Status: 422:')) {
+              // Try to extract more specific message if it exists in the error.message
+              const parts = error.message.split(': ');
+              if (parts.length > 2) {
+                errorMessage = parts.slice(2).join(': ');
+              }
+            }
+            errorMessageDiv.textContent = errorMessage;
+            errorMessageDiv.className = 'text-red-500 font-semibold';
+          } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Sign Up';
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
