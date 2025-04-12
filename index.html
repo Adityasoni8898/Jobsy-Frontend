@@ -191,12 +191,11 @@
             console.log("Signup successful:", data);
             errorMessageDiv.textContent = data.message || "Signup successful!";
             errorMessageDiv.className = 'text-green-500 font-semibold';
-            // Optionally redirect to login page after successful signup
             setTimeout(() => {
-              toggleFormMode(); // Switch back to login form
+              toggleFormMode(); 
               errorMessageDiv.textContent = '';
               errorMessageDiv.className = '';
-            }, 2000);
+            }, 1500);
 
           } catch (error) {
             console.error("Signup API call error:", error);
