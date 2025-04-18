@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Candidate Results</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-white text-gray-900">
+    <!-- NAVBAR -->
+    <div class="relative z-50">
+      <nav class="bg-white shadow px-4 py-3">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+          <!-- Hamburger -->
+          <button id="menuToggle" class="mr-4 focus:outline-none">
+            <svg
+              class="w-6 h-6 text-gray-800"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+
+          <!-- Center group -->
+          <div class="flex items-center space-x-6">
+            <a href="/Landing.html" class="text-gray-700 font-medium">Home</a>
+            <h1 class="text-2xl font-bold text-black">JOBSY</h1>
+            <a href="Recruiter.html" class="text-gray-700 font-medium"
+              >Dashboard</a
+            >
+          </div>
+
+          <!-- Profile -->
+          <div class="relative">
+            <button id="profileBtn" class="focus:outline-none">
+              <img
+                src="https://cdn-icons-png.freepik.com/256/1077/1077114.png?semt=ais_hybrid"
+                alt="User"
+                class="w-8 h-8 rounded-full"
+              />
+            </button>
+            <div
+              id="profileDropdown"
+              class="hidden absolute right-0 mt-2 w-40 bg-white border rounded shadow-md"
+            >
+              <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100"
+                >Profile</a
+              >
+              <a href="/Login.html" class="block px-4 py-2 text-sm hover:bg-gray-100"
+                >Log Out</a
+              >
+            </div>
+          </div>
+        </div>
+      </nav>
+    </div>
+
+    <!-- SIDE DRAWER -->
+    <div
+      id="sideDrawer"
+      class="fixed top-0 left-0 w-64 h-full bg-white shadow-lg z-40 transform -translate-x-full transition-transform duration-300"
+    >
+      <div class="p-6">
+        <h2 class="text-lg font-bold mb-4">Menu</h2>
+        <ul class="space-y-2">
+          <li>
+            <a
+              href="/Login.html"
+              class="block text-gray-800 hover:text-green-600"
+              >Login</a
+            >
+          </li>
+          <li>
+            <a
+              href="StudentForm.html"
+              class="block text-gray-800 hover:text-green-600"
+              >Student Form</a
+            >
+          </li>
+          <li>
+            <a
+              href="Student.html"
+              class="block text-gray-800 hover:text-green-600"
+              >Dashboard</a
+            >
+          </li>
+          <li>
+            <a
+              href="RecruiterForm.html"
+              class="block text-gray-800 hover:text-green-600"
+              >Recruit</a
+            >
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- BACKDROP -->
+    <div
+      id="backdrop"
+      class="hidden fixed inset-0 bg-black bg-opacity-40 z-30"
+    ></div>
+
+    <!-- PROGRESS BAR (optional) -->
+    <div class="w-full bg-gray-200 h-1 mb-6">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="max-w-7xl mx-auto p-6">
+      <h1 class="text-3xl font-semibold text-center mb-4">Candidates List</h1>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full bg-black border border-gray-700 shadow rounded-lg text-white">
+
+          <thead class="bg-gray-800 text-left text-white">
+
+            <tr>
+              <th class="py-3 px-5 border-b">Recruit ID</th>
+              <th class="py-3 px-5 border-b">Name</th>
+              <th class="py-3 px-5 border-b">Phone Number</th>
+              <th class="py-3 px-5 border-b">Match %</th>
+              <th class="py-3 px-5 border-b text-center">Contact</th>
+            </tr>
+          </thead>
+          <tbody id="candidatesTableBody" class="text-white">
+            <!-- Dynamic rows go here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- JS TO HANDLE MENU & PROFILE -->
+    <script>
+      const menuToggle = document.getElementById("menuToggle");
+      const sideDrawer = document.getElementById("sideDrawer");
+      const backdrop = document.getElementById("backdrop");
+      const profileBtn = document.getElementById("profileBtn");
+      const profileDropdown = document.getElementById("profileDropdown");
+
+      menuToggle.addEventListener("click", () => {
+        sideDrawer.classList.toggle("-translate-x-full");
+        backdrop.classList.toggle("hidden");
+      });
+
+      backdrop.addEventListener("click", () => {
+        sideDrawer.classList.add("-translate-x-full");
+        backdrop.classList.add("hidden");
+      });
+
+      profileBtn.addEventListener("click", () => {
+        profileDropdown.classList.toggle("hidden");
+      });
+    </script>
+
+    <!-- JS TO POPULATE TABLE -->
+    <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const tbody = document.getElementById("candidatesTableBody");
+
+    const storedData = localStorage.getItem("candidateResults");
+    if (!storedData) {
+      tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4">No candidate data found.</td></tr>`;
+      return;
+    }
+
+    let results;
+    try {
+      results = JSON.parse(storedData);
+    } catch (error) {
+      console.error("Error parsing candidate data:", error);
+      tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4">Invalid data format.</td></tr>`;
+      return;
+    }
+
+    if (!Array.isArray(results) || results.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4">No candidates available.</td></tr>`;
+      return;
+    }
+
+    results.forEach(candidate => {
+      const row = document.createElement("tr");
+      row.classList.add("hover:bg-gray-700", "transition");
+
+      row.innerHTML = `
+        <td class="py-3 px-5 border-b">${candidate.student_id}</td>
+        <td class="py-3 px-5 border-b">${candidate.name}</td>
+        <td class="py-3 px-5 border-b">${candidate.phone_number}</td>
+        <td class="py-3 px-5 border-b">${candidate.match_percentage}%</td>
+        <td class="py-3 px-5 border-b text-center">
+          <button onclick="contactEmail('${candidate.email || ''}', this)" class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition">
+  Contact Email
+</button>
+
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+  });
+
+  function contactEmail(email, buttonElement) {
+  // Set loading state
+  buttonElement.disabled = true;
+  buttonElement.innerHTML = `
+    <svg class="animate-spin h-5 w-5 mr-2 inline-block text-white" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="white" stroke-width="4" fill="none" />
+      <path class="opacity-75" fill="white" d="M4 12a8 8 0 018-8v8H4z" />
+    </svg>
+    Sending...`;
+
+  // Simulate email sending delay
+  setTimeout(() => {
+    buttonElement.innerHTML = `An email has been sent on your behalf`;
+    buttonElement.classList.remove("bg-green-600", "hover:bg-green-700");
+    buttonElement.classList.add("bg-gray-600", "cursor-not-allowed");
+  }, 1500); // 1.5 seconds delay
+}
+
+</script>
+
+    </script>
+  </body>
+</html>

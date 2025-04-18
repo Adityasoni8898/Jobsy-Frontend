@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jobsy - Landing</title>
+    <style>
+        .prevent-select {
+            -webkit-user-select: none; /* Safari */
+            -ms-user-select: none; /* IE 10 and IE 11 */
+            user-select: none; /* Standard syntax */
+            font-family: Arial, Helvetica, sans-serif;
+            color: rgb(235, 233, 233);
+            font-weight: 600;
+            font-size: 36px;
+            margin-bottom: 10px;
+            z-index: 2;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            width: 100vw;
+            background-color: #000000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+    position: absolute;
+    top: 5px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    z-index: 20; /* Ensures navbar stays on top */
+}
+
+.navbar a {
+    text-decoration: none;
+    font-size: 18px;
+    color: gray;
+    padding: 10px 20px; /* Consistent padding for both buttons */
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+}
+
+.navbar a.active {
+    color: rgb(0, 0, 0); /* White text */
+    background-color: rgb(255, 255, 255); /* Black background */
+}
+
+.navbar a:hover {
+    color: rgb(255, 255, 255);
+    background-color: rgb(0, 0, 0);
+    border: 1px solid rgb(128, 128, 128);
+}
+
+
+        /* Centered Text Styling */
+        .container {
+            margin-top: 100px;
+            text-align: center;
+            bottom: 15%;
+            z-index: 10; /* Make sure the text stays visible on top */
+        }
+
+        h1 {
+            font-family: Arial, Helvetica, sans-serif;
+            color: rgb(253, 253, 253);
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-family: Arial, Helvetica, sans-serif;
+            color: rgb(255, 255, 255);
+            font-size: 18px;
+            opacity: 0.8;
+        }
+
+        #image-track {
+            display: flex;
+            gap: 4vmin;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(0%, -50%);
+            z-index: 1;
+        }
+
+        .image {
+            width: 40vmin;
+            height: 56vmin;
+            object-fit: cover;
+            object-position: 100% center;
+            border: 3px solid rgb(136, 136, 136);
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* Expanded Image Styling */
+        .expanded-clone {
+            position: absolute;
+            z-index: 5; /* behind navbar and intro */
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            border-radius: 0;
+            cursor: zoom-out;
+            transition: all 0.6s ease-in-out;
+        }
+
+        h4 {
+            font-family: Arial, Helvetica, sans-serif;
+            color: rgb(255, 255, 255);
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .btm-container {
+            margin-top: 40px;
+            top: 80%;
+        }
+
+        .foot-container {
+            margin-top: 60px;
+            margin-bottom: 40px;
+            top: 90%;
+        }
+
+        .container,
+        .prevent-select,
+        .btm-container,
+        .foot-container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="/Login.html" class="active">Login</a>
+        <a href="/Login.html">Sign Up</a>
+    </div>
+
+    <div class="container">
+        <h1>Welcome to Jobsy</h1>
+        <p>Your one-stop AI-powered Job Search and Placement Tool.</p>
+    </div>
+  
+    <div id="image-track" data-mouse-down-at="0" data-prev-percentage="0">
+        <img class="image" src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" draggable="false"></img>
+        <img class="image" src="https://images.unsplash.com/photo-1578574577315-3fbeb0cecdc2?q=80&w=2072&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" draggable="false"></img>
+        <img class="image" src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" draggable="false"></img>
+        <img class='image' src='https://images.unsplash.com/photo-1523875194681-bedd468c58bf?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' draggable='false'></img>
+        <img class='image' src='https://images.unsplash.com/photo-1665686310429-ee43624978fa?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' draggable='false'></img>
+        <img class='image' src='https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' draggable='false'></img>
+        <img class='image' src='https://images.unsplash.com/photo-1541746972996-4e0b0f43e02a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' draggable='false'></img>
+        <img class='image' src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' draggable='false'></img>
+    </div>
+    
+    <div class="prevent-select" id="dynamic-message">Your career awaits you.</div>
+    <div class="btm-container">
+        <h4>Find your dream job and candidate.</h4> 
+    </div>
+
+    <footer>
+        <div class="foot-container">
+            <h4>Jobs made easy with AI</h4>
+            <p>Try now!</p>
+        </div>
+    </footer>
+
+    <script>
+        const track = document.getElementById("image-track");
+        const messageElement = document.getElementById("dynamic-message");
+        
+        const messages = [
+            "Your career awaits you.",
+            "A new opportunity is just a click away!",
+            "Step into your dream job today.",
+            "Unlock your potential with us.",
+            "The perfect job is waiting for you.",
+            "Ready to find your dream role?"
+        ];
+
+        let messageIndex = 0;
+
+        const handleOnDown = e => track.dataset.mouseDownAt = e.clientX;
+        const handleOnUp = () => {
+            track.dataset.mouseDownAt = "0";
+            track.dataset.prevPercentage = track.dataset.percentage;
+        };
+
+        const handleOnMove = e => {
+            if (track.dataset.mouseDownAt === "0") return;
+
+            const mouseDelta = parseFloat(track.dataset.mouseDownAt) - e.clientX,
+                  maxDelta = window.innerWidth / 2;
+
+            const percentage = (mouseDelta / maxDelta) * -100,
+                  nextPercentageUnconstrained = parseFloat(track.dataset.prevPercentage) + percentage,
+                  nextPercentage = Math.max(Math.min(nextPercentageUnconstrained, 0), -100);
+
+            track.dataset.percentage = nextPercentage;
+
+            track.animate({
+                transform: `translate(${nextPercentage}%, -50%)`
+            }, { duration: 1200, fill: "forwards" });
+
+            for (const image of track.getElementsByClassName("image")) {
+                image.animate({
+                    objectPosition: `${100 + nextPercentage}% center`
+                }, { duration: 1200, fill: "forwards" });
+            }
+        };
+
+        window.onmousedown = e => handleOnDown(e);
+        window.ontouchstart = e => handleOnDown(e.touches[0]);
+        window.onmouseup = e => handleOnUp(e);
+        window.ontouchend = e => handleOnUp(e.touches[0]);
+        window.onmousemove = e => handleOnMove(e);
+        window.ontouchmove = e => handleOnMove(e.touches[0]);
+
+        for (const image of track.getElementsByClassName("image")) {
+            image.addEventListener("click", () => {
+                const rect = image.getBoundingClientRect();
+                const clone = image.cloneNode();
+
+                clone.classList.add("expanded-clone");
+                clone.style.top = `${rect.top}px`;
+                clone.style.left = `${rect.left}px`;
+                clone.style.width = `${rect.width}px`;
+                clone.style.height = `${rect.height}px`;
+
+                document.body.appendChild(clone);
+
+                requestAnimationFrame(() => {
+                    clone.style.top = "0";
+                    clone.style.left = "0";
+                    clone.style.width = "100vw";
+                    clone.style.height = "100vh";
+                });
+
+                clone.addEventListener("click", () => {
+                    clone.style.top = `${rect.top}px`;
+                    clone.style.left = `${rect.left}px`;
+                    clone.style.width = `${rect.width}px`;
+                    clone.style.height = `${rect.height}px`;
+
+                    clone.addEventListener("transitionend", () => clone.remove(), { once: true });
+                });
+
+                // Change the message
+                messageIndex = (messageIndex + 1) % messages.length;
+                messageElement.textContent = messages[messageIndex];
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Dashboard - Jobsy</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      body {
+        overflow: hidden;
+      }
+      .carousel-transition {
+        transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+      }
+      .loading-spinner {
+        border-top-color: transparent;
+        animation: spin 0.8s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+    <script>
+      const allJobs = [
+        { title: "Frontend Developer", company: "CodeRidge" },
+        { title: "UX Designer", company: "PixelBloom" },
+        { title: "Data Analyst", company: "Insightify" },
+        { title: "Product Intern", company: "Amazon" },
+        { title: "Mobile App Developer", company: "AppWaves" },
+        { title: "Backend Engineer", company: "TechNest" },
+        { title: "Marketing Executive", company: "AdSutra" },
+        { title: "QA Analyst", company: "BugLogix" },
+        { title: "IT Support Engineer", company: "HelpDeskPro" },
+        { title: "Sales Intern", company: "Sellfinity" },
+        { title: "DevOps Engineer", company: "CloudHarbor" },
+        { title: "Software Engineer", company: "Google" },
+        { title: "ML Intern", company: "JP Morgan Chase" },
+        { title: "UI Developer", company: "WiredWolf Studios" },
+        { title: "Project Coordinator", company: "TaskNest" },
+        { title: "Full Stack Developer", company: "Innovalley" },
+        { title: "Graphic Designer", company: "Creofy" },
+        { title: "Blockchain Developer", company: "ChainFlick" },
+        { title: "SEO Analyst", company: "RankRocket" },
+        { title: "Technical Writer", company: "DocSpark" },
+      ];
+
+      const statusSteps = [
+        "Application Accepted",
+        "In Review",
+        "Resume Shortlisted",
+        "Interview Scheduled",
+        "Offer Received",
+      ];
+
+      const chipColors = [
+        "#f87171",
+        "#34d399",
+        "#60a5fa",
+        "#facc15",
+        "#a78bfa",
+      ];
+
+      function getRandomJobs(arr, count) {
+        const shuffled = [...arr].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, count);
+      }
+
+      window.addEventListener("DOMContentLoaded", () => {
+        const recommendedContainer = document.getElementById(
+          "recommended-jobs-list"
+        );
+        const appliedContainer = document.getElementById("applied-jobs-list");
+        const statusContainer = document.getElementById("application-status");
+        const skillChips = document.querySelectorAll("#trending-skills li");
+
+        skillChips.forEach((chip, i) => {
+          chip.classList.remove("bg-gray-700");
+          chip.style.backgroundColor = chipColors[i % chipColors.length];
+        });
+
+        const recommended = getRandomJobs(allJobs, 6);
+        const remainingJobs = allJobs.filter(
+          (job) =>
+            !recommended.some(
+              (rec) => rec.title === job.title && rec.company === job.company
+            )
+        );
+
+        const applied = getRandomJobs(remainingJobs, 6).map((job) => ({
+          ...job,
+          statusIndex: Math.floor(Math.random() * 4),
+        }));
+
+        recommendedContainer.innerHTML = recommended
+          .map(
+            (job, i) => `
+          <div class="flex justify-between items-center">
+            <div>
+              <strong>${job.title}</strong><br />
+              <small class="text-gray-400">${job.company}</small>
+            </div>
+            <button id="apply-btn-${i}" class="apply-btn bg-green-600 hover:bg-green-700 text-white text-xs font-semibold px-3 py-1 rounded flex items-center justify-center" data-index="${i}">
+              Apply now
+            </button>
+          </div>
+        `
+          )
+          .join("");
+
+        recommended.forEach((_, i) => {
+          const btn = document.getElementById(`apply-btn-${i}`);
+          btn.addEventListener("click", () => {
+            btn.innerHTML =
+              '<div class="w-4 h-4 border-2 border-white rounded-full loading-spinner"></div>';
+            const delay = Math.random() * 3000 + 1000;
+            setTimeout(() => {
+              btn.innerHTML =
+                '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>';
+            }, delay);
+          });
+        });
+
+        appliedContainer.innerHTML = applied
+          .map(
+            (job) => `
+          <li><strong>${job.title}</strong><br /><small>${job.company}</small></li>
+        `
+          )
+          .join("");
+
+        let index = 0;
+
+        function updateStatus() {
+          const job = applied[index % applied.length];
+          const activeIndex = job.statusIndex;
+          const progressPercent =
+            (activeIndex / (statusSteps.length - 1)) * 100;
+
+          const stepMarkers = statusSteps
+            .map((step, i) => {
+              const color = i <= activeIndex ? "bg-green-500" : "bg-gray-600";
+              return `<div class="relative flex-1 text-center">
+                        <div class="w-3 h-3 mx-auto rounded-full ${color}"></div>
+                        <div class="text-[10px] mt-1 text-gray-300">${step}</div>
+                      </div>`;
+            })
+            .join("");
+
+          statusContainer.innerHTML = `
+            <div class="carousel-transition opacity-0 transform scale-95" id="status-card">
+              <div class="min-w-[200px] bg-gray-700 p-4 rounded-lg space-y-4">
+                <div>
+                  <div class="text-sm font-semibold">${job.title}</div>
+                  <div class="text-xs text-gray-400">${job.company}</div>
+                </div>
+                <div class="relative h-2 bg-gray-600 rounded-full">
+                  <div class="absolute top-0 left-0 h-2 bg-green-500 rounded-full transition-all duration-500" style="width: ${progressPercent}%;"></div>
+                </div>
+                <div class="flex justify-between mt-2 text-xs">
+                  ${stepMarkers}
+                </div>
+              </div>
+            </div>
+          `;
+
+          const card = document.getElementById("status-card");
+          setTimeout(() => {
+            card.classList.remove("opacity-0", "scale-95");
+            card.classList.add("opacity-100", "scale-100");
+          }, 50);
+
+          index++;
+        }
+
+        updateStatus();
+        setInterval(updateStatus, 4000);
+
+        // Skill chart
+        const ctx = document.getElementById("skills-chart").getContext("2d");
+        new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: ["Nov", "Dec", "Jan", "Feb", "Mar", "Apr"],
+            datasets: [
+              {
+                label: "React",
+                borderColor: chipColors[0],
+                data: [10, 20, 18, 25, 30, 28],
+                fill: false,
+              },
+              {
+                label: "Python",
+                borderColor: chipColors[1],
+                data: [12, 18, 22, 27, 35, 40],
+                fill: false,
+              },
+              {
+                label: "Tailwind CSS",
+                borderColor: chipColors[2],
+                data: [8, 12, 15, 20, 23, 25],
+                fill: false,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+              y: { beginAtZero: true },
+            },
+          },
+        });
+      });
+    </script>
+  </head>
+  <body class="bg-white text-black font-sans">
+    <div class="relative z-50">
+      <nav class="bg-white shadow px-4 py-3">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+          <!-- Left-most: Hamburger -->
+          <button id="menuToggle" class="mr-4 focus:outline-none">
+            <svg
+              class="w-6 h-6 text-gray-800"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+
+          <!-- Center group: Home - JOBSY - Dashboard -->
+          <div class="flex items-center space-x-6">
+            <a href="/Landing.html" class="text-gray-700 font-medium">Home</a>
+            <h1 class="text-2xl font-bold text-black">Jobsy</h1>
+            <a
+              href="RecruiterForm.html"
+              class="text-gray-700 font-medium disabled"
+              >Recruit</a
+            >
+          </div>
+
+          <!-- Right-most: Profile -->
+          <div class="relative">
+            <button id="profileBtn" class="focus:outline-none">
+              <img
+                src="https://cdn-icons-png.freepik.com/256/1077/1077114.png?semt=ais_hybrid"
+                alt="User"
+                class="w-8 h-8 rounded-full"
+              />
+            </button>
+            <div
+              id="profileDropdown"
+              class="hidden absolute right-0 mt-2 w-40 bg-white border rounded shadow-md"
+            >
+              <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100"
+                >Profile</a
+              >
+              <a
+                href="/Login.html"
+                class="block px-4 py-2 text-sm hover:bg-gray-100"
+                >Log Out</a
+              >
+            </div>
+          </div>
+        </div>
+      </nav>
+    </div>
+
+    <!-- SIDE DRAWER -->
+    <div
+      id="sideDrawer"
+      class="fixed top-0 left-0 w-64 h-full bg-white shadow-lg z-40 transform -translate-x-full transition-transform duration-300"
+    >
+      <div class="p-6">
+        <h2 class="text-lg font-bold mb-4">Menu</h2>
+        <ul class="space-y-2">
+          <li>
+            <a
+              href="../index.html"
+              class="block text-gray-800 hover:text-green-600"
+              >Login</a
+            >
+          </li>
+          <li>
+            <a
+              href="StudentForm.html"
+              class="block text-gray-800 hover:text-green-600"
+              >Student Form</a
+            >
+          </li>
+          <li>
+            <a
+              href="Student.html"
+              class="block text-gray-800 hover:text-green-600"
+              >Dashboard</a
+            >
+          </li>
+          <li>
+            <a
+              href="RecruiterForm.html"
+              class="block text-gray-800 hover:text-green-600"
+              >Recruit</a
+            >
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- BACKDROP -->
+    <div
+      id="backdrop"
+      class="hidden fixed inset-0 bg-black bg-opacity-40 z-30"
+    ></div>
+
+    <div class="p-6">
+      <!-- Top Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+        <!-- Recommended Jobs -->
+        <div class="bg-black text-white p-4 rounded-xl shadow-md">
+          <h3 class="text-xl font-semibold mb-4">Recommended Jobs</h3>
+          <div id="recommended-jobs-list" class="space-y-2 text-sm"></div>
+        </div>
+
+        <!-- Recently Applied -->
+        <div class="bg-black text-white p-4 rounded-xl shadow-md">
+          <h3 class="text-xl font-semibold mb-4">Applied Jobs</h3>
+          <ul id="applied-jobs-list" class="text-sm space-y-2"></ul>
+        </div>
+
+        <!-- Trending Skills -->
+        <div class="bg-black text-white p-4 rounded-xl shadow-md">
+          <h3 class="text-xl font-semibold mb-4">Trending Skills</h3>
+          <ul id="trending-skills" class="flex flex-wrap gap-2 text-sm mb-4">
+            <li class="px-3 py-1 rounded-full">React</li>
+            <li class="px-3 py-1 rounded-full">Python</li>
+            <li class="px-3 py-1 rounded-full">Tailwind CSS</li>
+            <li class="px-3 py-1 rounded-full">TypeScript</li>
+            <li class="px-3 py-1 rounded-full">Node.js</li>
+          </ul>
+          <canvas id="skills-chart" height="120"></canvas>
+        </div>
+      </div>
+
+      <!-- Application Status Carousel -->
+      <div class="bg-black text-white p-4 rounded-xl shadow-md">
+        <h3 class="text-xl font-semibold mb-4">Application Status</h3>
+        <div id="application-status" class="relative h-44"></div>
+      </div>
+    </div>
+  </body>
+
+  <script>
+    // Side Drawer Toggle
+    const menuToggle = document.getElementById("menuToggle");
+    const sideDrawer = document.getElementById("sideDrawer");
+    const backdrop = document.getElementById("backdrop");
+
+    menuToggle.addEventListener("click", () => {
+      sideDrawer.classList.toggle("-translate-x-full");
+      backdrop.classList.toggle("hidden");
+    });
+
+    backdrop.addEventListener("click", () => {
+      sideDrawer.classList.add("-translate-x-full");
+      backdrop.classList.add("hidden");
+    });
+
+    // Profile Dropdown
+    const profileBtn = document.getElementById("profileBtn");
+    const profileDropdown = document.getElementById("profileDropdown");
+
+    profileBtn.addEventListener("click", () => {
+      profileDropdown.classList.toggle("hidden");
+    });
+
+    document.addEventListener("click", (e) => {
+      if (
+        !profileBtn.contains(e.target) &&
+        !profileDropdown.contains(e.target)
+      ) {
+        profileDropdown.classList.add("hidden");
+      }
+    });
+  </script>
+</html>

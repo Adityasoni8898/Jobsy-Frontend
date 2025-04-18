@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recruiter Dashboard - Jobsy</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .carousel-container {
+        overflow: hidden;
+        position: relative;
+      }
+      .carousel-item {
+        transition: transform 0.6s ease-in-out;
+        width: 100%;
+        flex-shrink: 0;
+      }
+    </style>
+  </head>
+  <body class="bg-white text-black min-h-screen">
+    <div class="relative z-50">
+      <nav class="bg-white shadow px-4 py-3">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+          <!-- Left-most: Hamburger -->
+          <button id="menuToggle" class="mr-4 focus:outline-none">
+            <svg
+              class="w-6 h-6 text-gray-800"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+
+          <!-- Center group: Home - JOBSY - Dashboard -->
+          <div class="flex items-center space-x-6">
+            <a href="/Landing.html" class="text-gray-700 font-medium">Home</a>
+            <h1 class="text-2xl font-bold text-black">JOBSY</h1>
+            <a
+              href="RecruiterForm.html"
+              class="text-gray-700 font-medium disabled"
+              >Recruit</a
+            >
+          </div>
+
+          <!-- Right-most: Profile -->
+          <div class="relative">
+            <button id="profileBtn" class="focus:outline-none">
+              <img
+                src="https://cdn-icons-png.freepik.com/256/1077/1077114.png?semt=ais_hybrid"
+                alt="User"
+                class="w-8 h-8 rounded-full"
+              />
+            </button>
+            <div
+              id="profileDropdown"
+              class="hidden absolute right-0 mt-2 w-40 bg-white border rounded shadow-md"
+            >
+              <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100"
+                >Profile</a
+              >
+              <a
+                href="/Login.html"
+                class="block px-4 py-2 text-sm hover:bg-gray-100"
+                >Log Out</a
+              >
+            </div>
+          </div>
+        </div>
+      </nav>
+    </div>
+
+    <!-- SIDE DRAWER -->
+    <div
+      id="sideDrawer"
+      class="fixed top-0 left-0 w-64 h-full bg-white shadow-lg z-40 transform -translate-x-full transition-transform duration-300"
+    >
+      <div class="p-6">
+        <h2 class="text-lg font-bold mb-4">Menu</h2>
+        <ul class="space-y-2">
+          <li>
+            <a
+              href="/Login.html"
+              class="block text-gray-800 hover:text-green-600"
+              >Login</a
+            >
+          </li>
+          <li>
+            <a
+              href="StudentForm.html"
+              class="block text-gray-800 hover:text-green-600"
+              >Student Form</a
+            >
+          </li>
+          <li>
+            <a
+              href="Student.html"
+              class="block text-gray-800 hover:text-green-600"
+              >Dashboard</a
+            >
+          </li>
+          <li>
+            <a
+              href="RecruiterForm.html"
+              class="block text-gray-800 hover:text-green-600"
+              >Recruit</a
+            >
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- BACKDROP -->
+    <div
+      id="backdrop"
+      class="hidden fixed inset-0 bg-black bg-opacity-40 z-30"
+    ></div>
+    <div class="px-6 py-4 space-y-6">
+      <!-- Sections Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Recommended Candidates -->
+        <div class="bg-black text-white rounded-2xl p-4 shadow">
+          <h2 class="text-xl font-semibold mb-3">Recommended Candidates</h2>
+          <ul id="recommendedCandidates" class="space-y-2"></ul>
+        </div>
+
+        <!-- Jobs Posted -->
+        <div class="bg-black text-white rounded-2xl p-4 shadow">
+          <h2 class="text-xl font-semibold mb-3">Jobs Posted</h2>
+          <ul id="jobsPosted" class="space-y-2"></ul>
+        </div>
+
+        <!-- Trending Jobs -->
+        <div class="bg-black text-white rounded-2xl p-4 shadow">
+          <h2 class="text-xl font-semibold mb-3">Trending Jobs</h2>
+          <div id="trendingChips" class="flex flex-wrap gap-2 mb-4"></div>
+          <div class="bg-white rounded-md p-2">
+            <canvas id="trendingChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recruitment Status Carousel -->
+      <div class="bg-black text-white rounded-2xl p-4 shadow">
+        <h2 class="text-xl font-semibold mb-3">Recruitment Status</h2>
+        <div class="carousel-container h-28">
+          <div id="carouselInner" class="flex w-full"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const mockCandidates = [
+        { name: "Aarav Mehta", role: "Frontend Developer", city: "Bangalore" },
+        { name: "Sneha Kapoor", role: "Data Scientist", city: "Mumbai" },
+        { name: "Rohan Das", role: "UI/UX Designer", city: "Delhi" },
+        { name: "Neha Sharma", role: "QA Tester", city: "Hyderabad" },
+        { name: "Kabir Rao", role: "Product Manager", city: "Chennai" },
+        { name: "Divya Nair", role: "Backend Developer", city: "Pune" },
+        { name: "Ishaan Joshi", role: "Mobile Developer", city: "Ahmedabad" },
+        { name: "Anika Reddy", role: "DevOps Engineer", city: "Hyderabad" },
+        { name: "Vikram Roy", role: "Security Analyst", city: "Noida" },
+        { name: "Meera Patil", role: "AI Researcher", city: "Bangalore" },
+        { name: "Tanmay Gupta", role: "ML Engineer", city: "Pune" },
+        { name: "Pooja Iyer", role: "Cloud Engineer", city: "Mumbai" },
+        { name: "Rahul Khanna", role: "System Architect", city: "Delhi" },
+        { name: "Aditi Verma", role: "Technical Writer", city: "Chandigarh" },
+      ];
+
+      const recruiterCompany = "TechNova Solutions";
+      const mockJobs = [
+        {
+          title: "Backend Developer",
+          company: recruiterCompany,
+          city: "Bangalore",
+        },
+        { title: "Data Analyst", company: recruiterCompany, city: "Bangalore" },
+        {
+          title: "UI/UX Designer",
+          company: recruiterCompany,
+          city: "Bangalore",
+        },
+        {
+          title: "DevOps Engineer",
+          company: recruiterCompany,
+          city: "Bangalore",
+        },
+        {
+          title: "Frontend Developer",
+          company: recruiterCompany,
+          city: "Bangalore",
+        },
+        {
+          title: "Product Manager",
+          company: recruiterCompany,
+          city: "Bangalore",
+        },
+        { title: "QA Tester", company: recruiterCompany, city: "Bangalore" },
+        {
+          title: "Mobile Developer",
+          company: recruiterCompany,
+          city: "Bangalore",
+        },
+        {
+          title: "Security Analyst",
+          company: recruiterCompany,
+          city: "Bangalore",
+        },
+        { title: "AI Engineer", company: recruiterCompany, city: "Bangalore" },
+      ];
+
+      const getRandomItems = (array, count) => {
+        const shuffled = [...array].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, count);
+      };
+
+      const recommended = getRandomItems(mockCandidates, 6);
+      document.getElementById("recommendedCandidates").innerHTML = recommended
+        .map(
+          (c, index) =>
+            `<li class="flex justify-between items-center"><div><strong>${c.name}</strong><br/><small>${c.role}, ${c.city}</small></div><button class="text-sm bg-green-500 text-white px-2 py-1 rounded contact-btn" data-id="${index}">Contact</button></li>`
+        )
+        .join("");
+
+      const jobsPosted = mockJobs.slice(0, 6);
+      const trendingJobs = mockJobs.slice(6, 10);
+
+      document.getElementById("jobsPosted").innerHTML = jobsPosted
+        .map(
+          (job) =>
+            `<li><strong>${job.title}</strong><br/><small>${job.company}, ${job.city}</small></li>`
+        )
+        .join("");
+
+      const chipColors = ["#ef4444", "#3b82f6", "#10b981", "#facc15"];
+      document.getElementById("trendingChips").innerHTML = trendingJobs
+        .map(
+          (job, i) =>
+            `<span class="text-xs text-white px-3 py-1 rounded-full" style="background-color:${
+              chipColors[i % chipColors.length]
+            }">${job.title}</span>`
+        )
+        .join("");
+
+      const ctx = document.getElementById("trendingChart").getContext("2d");
+      new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: ["Jan", "Feb", "Mar", "Apr"],
+          datasets: trendingJobs.map((job, i) => ({
+            label: job.title,
+            data: [5 + i, 7 + i, 10 + i, 12 + i],
+            borderColor: chipColors[i % chipColors.length],
+            backgroundColor: chipColors[i % chipColors.length],
+            fill: false,
+            tension: 0.4,
+          })),
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { color: "black" },
+              grid: { color: "#ccc" },
+            },
+            x: {
+              ticks: { color: "black" },
+              grid: { color: "#ccc" },
+            },
+          },
+          plugins: {
+            legend: {
+              labels: { color: "black" },
+            },
+          },
+        },
+      });
+
+      // Recruitment Status Carousel
+      const statusSteps = [
+        "Application Received",
+        "In Review",
+        "Shortlisted",
+        "Interview Scheduled",
+      ];
+      const carouselInner = document.getElementById("carouselInner");
+
+      jobsPosted.forEach((job, i) => {
+        const statusIndex = i % statusSteps.length;
+        const stepPercent = ((statusIndex + 1) / statusSteps.length) * 100;
+
+        const item = document.createElement("div");
+        item.className = "carousel-item px-4";
+        item.innerHTML = `
+          <div class="text-center">
+            <div class="text-md font-semibold">${job.title}</div>
+            <div class="text-sm text-gray-400 mb-2">${statusSteps[statusIndex]}</div>
+            <div class="w-full h-2 bg-gray-700 rounded-full">
+              <div class="h-2 bg-green-500 rounded-full" style="width: ${stepPercent}%"></div>
+            </div>
+          </div>`;
+        carouselInner.appendChild(item);
+      });
+
+      let current = 0;
+      setInterval(() => {
+        const total = carouselInner.children.length;
+        current = (current + 1) % total;
+        carouselInner.style.transform = `translateX(-${current * 100}%)`;
+      }, 4000);
+
+      // Contact Button Interaction
+      document.querySelectorAll(".contact-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const originalText = btn.innerHTML;
+          btn.disabled = true;
+          btn.innerHTML = `<svg class="animate-spin h-4 w-4 mr-1 inline-block text-white" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"></path></svg>`;
+          const delay = Math.floor(Math.random() * 2000) + 1000;
+          setTimeout(() => {
+            btn.innerHTML = "Email Sent";
+            btn.classList.remove("bg-green-500");
+            btn.classList.add("bg-gray-600");
+          }, delay);
+        });
+      });
+    </script>
+    <script>
+      // Side Drawer Toggle
+      const menuToggle = document.getElementById("menuToggle");
+      const sideDrawer = document.getElementById("sideDrawer");
+      const backdrop = document.getElementById("backdrop");
+
+      menuToggle.addEventListener("click", () => {
+        sideDrawer.classList.toggle("-translate-x-full");
+        backdrop.classList.toggle("hidden");
+      });
+
+      backdrop.addEventListener("click", () => {
+        sideDrawer.classList.add("-translate-x-full");
+        backdrop.classList.add("hidden");
+      });
+
+      // Profile Dropdown
+      const profileBtn = document.getElementById("profileBtn");
+      const profileDropdown = document.getElementById("profileDropdown");
+
+      profileBtn.addEventListener("click", () => {
+        profileDropdown.classList.toggle("hidden");
+      });
+
+      document.addEventListener("click", (e) => {
+        if (
+          !profileBtn.contains(e.target) &&
+          !profileDropdown.contains(e.target)
+        ) {
+          profileDropdown.classList.add("hidden");
+        }
+      });
+    </script>
+  </body>
+</html>
