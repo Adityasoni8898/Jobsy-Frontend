@@ -9,18 +9,35 @@
       rel="stylesheet"
     />
     <style>
+      body, html {
+        margin: 0;
+        padding: 0;
+        background: black;
+        overflow: hidden;
+      }
+      canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+      }
       body {
-        font-family: "Inter", sans-serif;
-      }
-      .form-box {
-        max-width: 28rem;
-      }
-      .text-sm {
-        margin-top: 20px;
-      }
+          font-family: "Inter", sans-serif;
+        }
+        .form-box {
+          max-width: 28rem;
+           z-index: 1
+        }
+        .text-sm {
+          margin-top: 20px;
+        }
+      
     </style>
   </head>
   <body class="bg-black text-white-900">
+    <!-- Mouse trail canvas -->
+    <canvas id="webCanvas"></canvas>
+
     <div class="min-h-screen flex flex-col justify-center items-center px-4">
       <div class="text-center mb-8">
         <h1 class="text-4xl font-bold text-white">Jobsy</h1>
@@ -30,7 +47,7 @@
       </div>
 
       <div
-        class="form-box w-full p-6 bg-white border border-gray-200 rounded-lg shadow-md"
+        id="formCard" class="form-box w-full p-6 bg-white border border-gray-200 rounded-lg shadow-md"
       >
         <h2 class="text-2xl font-bold mb-4 text-center" id="formTitle">
           Login
@@ -300,6 +317,95 @@
           }
         }
       });
+
+      
+    </script>
+    <script>
+      const canvas = document.getElementById("webCanvas");
+  const ctx = canvas.getContext("2d");
+  
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  
+  // Call resize initially to set the correct canvas size
+  resize();
+  
+  // Recalculate the canvas size on window resize
+  window.addEventListener("resize", resize);
+  
+      class Point {
+        constructor(x, y) {
+          this.originX = x;
+          this.originY = y;
+          this.x = x;
+          this.y = y;
+          this.vx = 0;
+          this.vy = 0;
+        }
+  
+        update(mouseX, mouseY) {
+          const dx = mouseX - this.x;
+          const dy = mouseY - this.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const force = Math.max(0, 1 - dist / 200) * 0.2;
+          this.vx += (this.originX - this.x) * 0.01 - dx * force;
+          this.vy += (this.originY - this.y) * 0.01 - dy * force;
+  
+          this.vx *= 0.9;
+          this.vy *= 0.9;
+  
+          this.x += this.vx;
+          this.y += this.vy;
+        }
+      }
+  
+      const points = [];
+      for (let x = 0; x < canvas.width; x += 80) {
+        for (let y = 0; y < canvas.height; y += 80) {
+          points.push(new Point(x, y));
+        }
+      }
+  
+      let mouseX = 0, mouseY = 0;
+      document.addEventListener("mousemove", e => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+      });
+  
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+        for (const p of points) p.update(mouseX, mouseY);
+  
+        for (let i = 0; i < points.length; i++) {
+          for (let j = i + 1; j < points.length; j++) {
+            const dx = points[i].x - points[j].x;
+            const dy = points[i].y - points[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 120) {
+              const opacity = 1 - dist / 120;
+              ctx.strokeStyle = `rgba(0,255,0,${opacity})`;
+              ctx.beginPath();
+              ctx.moveTo(points[i].x, points[i].y);
+              ctx.lineTo(points[j].x, points[j].y);
+              ctx.stroke();
+            }
+          }
+        }
+  
+        for (const p of points) {
+          ctx.fillStyle = "lime";
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 1.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+  
+        requestAnimationFrame(draw);
+      }
+  
+      draw();
     </script>
   </body>
 </html>

@@ -11,10 +11,11 @@
             user-select: none; /* Standard syntax */
             font-family: Arial, Helvetica, sans-serif;
             color: rgb(235, 233, 233);
-            font-weight: 600;
-            font-size: 36px;
+            font-weight: 700;
+            font-size: 50px;
             margin-bottom: 10px;
             z-index: 2;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
         }
 
         body {
@@ -33,13 +34,12 @@
 
         /* Navbar Styling */
         .navbar {
-    position: absolute;
-    top: 5px;
+    margin-top: 20px;
     display: flex;
     justify-content: center;
-    gap: 20px;
-    z-index: 20; /* Ensures navbar stays on top */
+    z-index: 10;
 }
+
 
 .navbar a {
     text-decoration: none;
@@ -64,7 +64,6 @@
 
         /* Centered Text Styling */
         .container {
-            margin-top: 100px;
             text-align: center;
             bottom: 15%;
             z-index: 10; /* Make sure the text stays visible on top */
@@ -74,7 +73,7 @@
             font-family: Arial, Helvetica, sans-serif;
             color: rgb(253, 253, 253);
             font-size: 36px;
-            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
         }
 
         p {
@@ -82,12 +81,14 @@
             color: rgb(255, 255, 255);
             font-size: 18px;
             opacity: 0.8;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
         }
 
         #image-track {
             display: flex;
             gap: 4vmin;
             position: absolute;
+            margin-top: 40px;
             left: 50%;
             top: 50%;
             transform: translate(0%, -50%);
@@ -123,17 +124,26 @@
             color: rgb(255, 255, 255);
             font-size: 24px;
             margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
         }
 
         .btm-container {
             margin-top: 40px;
             top: 80%;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
         }
 
         .foot-container {
             margin-top: 60px;
             margin-bottom: 40px;
             top: 90%;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+        .prevent-select-footer{
+            -webkit-user-select: none; /* Safari */
+            -ms-user-select: none; /* IE 10 and IE 11 */
+            user-select: none; /* Standard syntax */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
         }
 
         .container,
@@ -148,14 +158,13 @@
     </style>
 </head>
 <body>
-    <div class="navbar">
-        <a href="/Login.html" class="active">Login</a>
-        <a href="/Login.html">Sign Up</a>
-    </div>
 
     <div class="container">
         <h1>Welcome to Jobsy</h1>
         <p>Your one-stop AI-powered Job Search and Placement Tool.</p>
+        <div class="navbar">
+            <a href="/Login.html" class="active">Get Started</a>
+        </div>
     </div>
   
     <div id="image-track" data-mouse-down-at="0" data-prev-percentage="0">
@@ -175,9 +184,9 @@
     </div>
 
     <footer>
-        <div class="foot-container">
+        <div class="foot-container prevent-select-footer">
             <h4>Jobs made easy with AI</h4>
-            <p>Try now!</p>
+            <p>Jobsy© 2025</p>
         </div>
     </footer>
 
